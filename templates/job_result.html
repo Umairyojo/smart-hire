@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><title>Job Description Parsed</title></head>
+<body>
+    <h2>Extracted Job Description Data</h2>
+    <ul>
+        <li><strong>Filename:</strong> {{ data.filename }}</li>
+        <li><strong>Word Count:</strong> {{ data.total_words }}</li>
+        <li><strong>Top Keywords:</strong>
+            <ul>
+                {% for keyword in data.top_keywords %}
+                    <li>{{ keyword }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    <p><strong>Preview:</strong> {{ data.raw_text }}</p>
+    <a href="{{ url_for('upload_job') }}">Upload Another Job Description</a>
+</body>
+</html>

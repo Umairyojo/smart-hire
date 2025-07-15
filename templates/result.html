@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Resume Data</title></head>
+<body>
+    <h2>Extracted Resume Data</h2>
+    <ul>
+        {% for key, value in data.items() %}
+            <li><strong>{{ key.capitalize() }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('upload_resume') }}">Upload Another</a>
+</body>
+</html>

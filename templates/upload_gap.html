@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Analyze Skill Gap</title></head>
+<body>
+    <h2>Upload Resume and Provide Job Description</h2>
+    <form method="post" enctype="multipart/form-data">
+        <label><strong>Resume Upload (PDF/DOCX/TXT):</strong></label><br>
+        <input type="file" name="resume" required><br><br>
+
+        <label><strong>Job Description (upload a file or paste below):</strong></label><br>
+        <input type="file" name="job"><br><br>
+
+        <label>OR paste job description here:</label><br>
+        <textarea name="job_text" rows="12" cols="80"></textarea><br><br>
+
+        <input type="submit" value="Analyze Skill Gap">
+    </form>
+</body>
+</html>
