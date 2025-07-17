@@ -1,46 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head><title>Analysis Results</title></head>
-<body>
-    <h2>SmartHire Analysis Result</h2>
+<h2>SmartHire Skill Gap Analysis</h2>
 
-    <h3>Resume Keywords:</h3>
+<h3>Skills Extracted from Resume:</h3>
+<ul>
+    {% for kw in resume_keywords %}
+        <li>{{ kw }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Skills Extracted from Job Description:</h3>
+<ul>
+    {% for kw in job_keywords %}
+        <li>{{ kw }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Missing Skills (Gap):</h3>
+{% if missing_skills %}
     <ul>
-        {% for kw in resume_keywords %}
-            <li>{{ kw }}</li>
+        {% for skill in missing_skills %}
+            <li>{{ skill }}</li>
         {% endfor %}
     </ul>
+{% else %}
+    <p>No major skill gaps. You're ready!</p>
+{% endif %}
 
-    <h3>Job Keywords:</h3>
+<h3>Recommended Courses for Upskilling:</h3>
+{% if recommended_courses %}
     <ul>
-        {% for kw in job_keywords %}
-            <li>{{ kw }}</li>
+        {% for course in recommended_courses %}
+            <li><a href="{{ course.url }}" target="_blank">{{ course.title }}</a></li>
         {% endfor %}
     </ul>
-
-    <h3>Missing Skills:</h3>
-    {% if missing_skills %}
-        <ul>
-            {% for skill in missing_skills %}
-                <li>{{ skill }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No major skill gaps. You're ready!</p>
-    {% endif %}
-
-    <h3>Recommended Courses:</h3>
-    {% if recommended_courses %}
-        {% for skill, courses in recommended_courses.items() %}
-            <h4>For "{{ skill }}"</h4>
-            <ul>
-                {% for course in courses %}
-                    <li><a href="{{ course.url }}" target="_blank">{{ course.title }}</a></li>
-                {% endfor %}
-            </ul>
-        {% endfor %}
-    {% else %}
-        <p>No course recommendations found.</p>
-    {% endif %}
-</body>
-</html>
+{% else %}
+    <p>No relevant courses found.</p>
+{% endif %}

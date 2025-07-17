@@ -1,0 +1,23 @@
+<h2>Top Matching Jobs Based on Your Resume</h2>
+
+<h3>Extracted Skills from Resume:</h3>
+<ul>
+    {% for kw in resume_keywords %}
+        <li>{{ kw }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Top Job Matches:</h3>
+{% if matched_jobs %}
+    <ol>
+        {% for job in matched_jobs %}
+            <li>
+                <strong>{{ job.filename }}</strong> — 
+                Match Score: <strong>{{ "%.2f"|format(job.score * 100) }}%</strong>
+                <p><em>{{ job.text[:300] }}...</em></p>
+            </li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <p>No matching jobs found.</p>
+{% endif %}
