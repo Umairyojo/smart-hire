@@ -16,10 +16,25 @@ def is_valid_skill(word):
         not all(char in string.punctuation for char in word)
     )
 
-def detect_skill_gap(resume_keywords, job_keywords):
-    resume_set = set([kw.lower() for kw in resume_keywords])
-    job_set = set([kw.lower() for kw in job_keywords])
+from rapidfuzz import fuzz
 
-    raw_missing = job_set - resume_set
-    filtered = [skill for skill in raw_missing if is_valid_skill(skill)]
-    return sorted(filtered)
+def detect_skill_gap(resume_keywords, job_keywords, similarity_threshold=80):
+    resume_set = set(kw.lower() for kw in resume_keywords)
+    job_set = set(kw.lower() for kw in job_keywords)
+
+    missing_skills = []
+    for job_skill in job_set:
+        if not is_valid_skill(job_skill):
+            continue
+
+        match_found = False
+        for resume_skill in resume_set:
+            if fuzz.token_sort_ratio(job_skill, resume_skill) >= similarity_threshold:
+                match_found = True
+                break
+
+        if not match_found:
+            missing_skills.append(job_skill)
+
+    return sorted(set(missing_skills))
+

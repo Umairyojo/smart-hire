@@ -4,6 +4,9 @@ from resume_parser import extract_resume_data
 from job_analyzer import extract_job_description_data
 from skill_gap import detect_skill_gap
 from recommender import recommend_courses
+from job_matcher import match_jobs
+from bert_skill_extractor import extract_skills_from_text
+
 
 
 
@@ -44,7 +47,9 @@ def analyze_gap():
         job_file = request.files.get('job')
         job_text = request.form.get('job_text', '').strip()
 
-        # Save and parse resume
+        from bert_skill_extractor import extract_skills_from_text  # Add this here if needed
+
+        # Parse resume
         if resume_file:
             resume_path = os.path.join(app.config['UPLOAD_FOLDER'], resume_file.filename)
             resume_file.save(resume_path)
@@ -52,39 +57,53 @@ def analyze_gap():
         else:
             return "Resume file is required.", 400
 
-        # Handle job description: file upload OR pasted text
+        # Job description: file or text
         if job_file and job_file.filename:
             job_path = os.path.join('data/jobs', job_file.filename)
             job_file.save(job_path)
             job_data = extract_job_description_data(job_path)
-            job_keywords = job_data["top_keywords"]
+            job_keywords = job_data["skills_detected"]
         elif job_text:
-            from job_analyzer import nlp  # reuse spaCy object
-            doc = nlp(job_text)
-            job_keywords = [token.text for token in doc if token.pos_ in ['NOUN', 'PROPN'] and not token.is_stop]
+            job_keywords = extract_skills_from_text(job_text)
         else:
             return "Provide job description via upload or paste.", 400
 
-        # Skill gap detection
         missing_skills = detect_skill_gap(
-            resume_data["top_keywords"],
+            resume_data["skills_detected"],
             job_keywords
         )
 
-        # Course recommendations
         recommended_courses = recommend_courses(missing_skills)
 
         return render_template(
-    'gap_result.html',
-    resume_keywords=resume_data["top_keywords"],
-    job_keywords=job_keywords,
-    missing_skills=missing_skills,
-    recommended_courses=recommended_courses
-)
-
+            'gap_result.html',
+            resume_keywords=resume_data["skills_detected"],
+            job_keywords=job_keywords,
+            missing_skills=missing_skills,
+            recommended_courses=recommended_courses
+        )
 
     return render_template('upload_gap.html')
 
+
+@app.route('/match_jobs', methods=['GET', 'POST'])
+def match_jobs_view():
+    if request.method == 'POST':
+        resume_file = request.files['resume']
+        if not resume_file:
+            return "Please upload a resume.", 400
+
+        resume_path = os.path.join(app.config['UPLOAD_FOLDER'], resume_file.filename)
+        resume_file.save(resume_path)
+        resume_data = extract_resume_data(resume_path)
+
+        matched_jobs = match_jobs(resume_data['skills_detected'])  # ✅
+
+        return render_template('job_matches.html',
+                               resume_keywords=resume_data['top_keywords'],
+                               matched_jobs=matched_jobs)
+
+    return render_template('upload_resume_match.html')
 
 
 if __name__ == '__main__':
