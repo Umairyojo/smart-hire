@@ -1,42 +1,59 @@
+# bert_skill_extractor.py
+
+import pandas as pd
+import numpy as np
+from sentence_transformers import SentenceTransformer, util
 from keybert import KeyBERT
-import re
 
-model = KeyBERT(model='paraphrase-MiniLM-L6-v2')
+class SkillExtractor:
+    def __init__(
+        self,
+        skill_list_path: str = 'data/skills.csv',
+        model_name: str = 'sentence-transformers/all-MiniLM-L6-v2',
+        min_similarity: float = 0.7
+    ):
+        print("[DEBUG] Before loading model")
+        self.model = SentenceTransformer(model_name)
+        print("[DEBUG] After loading model")
+        self.kb = KeyBERT(model=self.model)  # backend uses SBERT :contentReference[oaicite:2]{index=2}
 
-NON_SKILL_PHRASES = ['gmail', 'email', 'linkedin', 'objective', 'contact', 'career', 'bangalore', 'address', 'phone']
+        skills_df = pd.read_csv(skill_list_path)
+        print("[DEBUG] Encoding skill embeddings...")
+        self.skill_list = (
+            skills_df['skill']
+            .dropna()
+            .astype(str)
+            .str.strip()
+            .unique()
+            .tolist()
+        )
+        self.skill_embeds = self.model.encode(self.skill_list, convert_to_tensor=True)
+        print("[DEBUG] Model and embeddings ready")
 
-def clean_text(text):
-    text = re.sub(r'\s+', ' ', text)
-    return text.strip()
+        self.min_similarity = min_similarity
 
-def is_likely_skill(phrase):
-    phrase = phrase.lower()
-    if any(bad in phrase for bad in NON_SKILL_PHRASES):
-        return False
-    if len(phrase) < 3 or len(phrase.split()) > 5:
-        return False
-    if phrase.isdigit():
-        return False
-    return True
+    def extract_skills(self, text: str, top_n: int = 20) -> list[str]:
+        if not text or len(text.strip()) < 20:
+            return []
 
-def extract_skills_from_text(text, top_n=20, diversity=0.3):
-    text = clean_text(text)
-    if not text or len(text.split()) < 10:
-        return []
+        candidates = [
+            kw[0] for kw in self.kb.extract_keywords(
+                text,
+                keyphrase_ngram_range=(1, 3),
+                stop_words='english',
+                top_n=top_n
+            )
+        ]
+        if not candidates:
+            return []
 
-    keywords = model.extract_keywords(
-        text,
-        keyphrase_ngram_range=(1, 3),
-        stop_words='english',
-        use_mmr=True,
-        diversity=diversity,
-        top_n=top_n
-    )
+        cand_embeds = self.model.encode(candidates, convert_to_tensor=True)
+        sim_matrix = util.cos_sim(cand_embeds, self.skill_embeds)
 
-    skills = sorted(set([
-        phrase.lower()
-        for phrase, _ in keywords
-        if is_likely_skill(phrase)
-    ]))
+        extracted = [
+            candidates[i]
+            for i in range(len(candidates))
+            if float(sim_matrix[i].max()) >= self.min_similarity
+        ]
 
-    return skills
+        return sorted(set(extracted))

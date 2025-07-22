@@ -2,10 +2,10 @@ from flask import Flask, request, render_template, redirect, url_for
 import os
 from resume_parser import extract_resume_data
 from job_analyzer import extract_job_description_data
-from skill_gap import detect_skill_gap
+from skill_gap import compute_skill_gap as detect_skill_gap
 from recommender import recommend_courses
 from job_matcher import match_jobs
-from bert_skill_extractor import extract_skills_from_text
+from bert_skill_extractor import SkillExtractor
 
 
 
@@ -13,6 +13,14 @@ from bert_skill_extractor import extract_skills_from_text
 app = Flask(__name__)
 UPLOAD_FOLDER = 'data/resumes'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def get_extractor():
+    if not hasattr(get_extractor, "_instance"):
+        from bert_skill_extractor import SkillExtractor
+        print("[INFO] Lazy-loading SkillExtractor...")
+        get_extractor._instance = SkillExtractor()
+    return get_extractor._instance
+
 
 @app.route('/')
 def home():
@@ -47,8 +55,6 @@ def analyze_gap():
         job_file = request.files.get('job')
         job_text = request.form.get('job_text', '').strip()
 
-        from bert_skill_extractor import extract_skills_from_text  # Add this here if needed
-
         # Parse resume
         if resume_file:
             resume_path = os.path.join(app.config['UPLOAD_FOLDER'], resume_file.filename)
@@ -64,7 +70,8 @@ def analyze_gap():
             job_data = extract_job_description_data(job_path)
             job_keywords = job_data["skills_detected"]
         elif job_text:
-            job_keywords = extract_skills_from_text(job_text)
+            extractor = get_extractor()
+            job_keywords = extractor.extract_skills(job_text)
         else:
             return "Provide job description via upload or paste.", 400
 

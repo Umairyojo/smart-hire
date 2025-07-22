@@ -1,20 +1,50 @@
-Job Title: Data Scientist
+Associate Software Developer
 
-We are looking for a highly motivated and skilled Data Scientist to join our analytics team. You will work on projects involving large-scale data analysis, predictive modeling, and machine learning.
+We are seeking a talented and motivated Associate Software Developer to join our dynamic team. The ideal candidate will have a strong foundation in Java and SQL, experience with web technologies, and a passion for creating innovative, scalable solutions. As an Associate Software Developer, you will contribute to various projects, collaborate with cross-functional teams, and play a key role in delivering impactful results.
 
 Responsibilities:
-- Develop machine learning models using Python and scikit-learn
-- Work with SQL databases for data extraction and transformation
-- Collaborate with cross-functional teams to define business problems
-- Build data pipelines and visualization dashboards
 
-Required Skills:
-- Strong experience in Python, NumPy, and Pandas
-- Experience with ML frameworks like scikit-learn or TensorFlow
-- Good knowledge of SQL and data wrangling
-- Experience in data visualization (e.g., Matplotlib, Seaborn)
-- Bachelor's or Master’s degree in Computer Science, Data Science, or related field
+Develop and customize software modules, collaborating with a team to implement new features and handle system migrations.
 
-Preferred:
-- Experience with NLP or time series analysis
-- Cloud platform knowledge (AWS, GCP, or Azure)
+Lead project development, including building comprehensive domain sites and managing client communications.
+
+Create API integrations to improve data management efficiency.
+
+Optimize site performance, ensuring high availability and seamless user experiences.
+
+Contribute to all phases of the development lifecycle, from design to deployment and maintenance.
+
+Required Skills and Experience:
+
+1 year of experience as an Associate Software Developer or similar role (2022-2023). 
+
+
+Core Java: Strong understanding of OOPS concepts (Inheritance, Polymorphism, Encapsulation, Abstraction), Object class, Multi-Threading, and Exception Handling. 
+
+
+SQL: Proficient in writing SQL queries, DDL, DML, and TCL commands, with good knowledge of Sub-queries, Co-related Sub-queries, and Joins. 
+
+
+Web Technologies: Experience with HTML, CSS, Bootstrap, and JavaScript. 
+
+
+Drupal 9 CMS: Knowledge of PHP, jQuery, Ajax, custom module creation, and migration. 
+
+
+Problem-solving and Analytical Skills: Strong ability to analyze problems and devise effective solutions. 
+
+
+Collaboration and Communication: Excellent interpersonal skills for teamwork and client interaction. 
+
+
+
+Adaptability: Quick to learn and adapt to new technologies. 
+
+
+Time Management: Effective in managing time and meeting deadlines. 
+
+Preferred Qualifications:
+
+Experience with Oracle 10g database, workbench, or mysqlite. 
+
+Familiarity with Library Management System concepts. 
